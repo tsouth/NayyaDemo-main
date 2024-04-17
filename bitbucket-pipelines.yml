@@ -1,0 +1,47 @@
+image:
+  name: maven:3.8.2-openjdk-16
+
+options:
+  docker: true
+
+definitions:
+  services:
+    chrome:
+      image: selenium/standalone-chrome:92.0-20210823
+    firefox:
+      image: selenium/standalone-firefox:91.0-20210823
+  steps:
+    - step: &run-staging
+        name: Run staging tests
+        caches:
+          - maven
+        script:
+          - export nayya_ACCOUNTS_PASSWORD=$nayya_TESTING_ACCOUNT_PASSWORD
+          - mvn -Pstaging -Psuite -Premote-chrome test -DsuiteFile=smokeTests.xml
+        services:
+          - chrome
+        artifacts:
+          - target/screenshots/*.png
+    - step: &run-production
+        name: Run production tests
+        caches:
+          - maven
+        script:
+          - export nayya_ACCOUNTS_PASSWORD=$nayya_TESTING_ACCOUNT_PASSWORD
+
+          - mvn -Psuite -Premote-chrome test -DsuiteFile=smokeTests.xml
+        services:
+          - chrome
+        artifacts:
+          - target/screenshots/*.png
+pipelines:
+  default:
+    - step: *run-staging
+  branches:
+    master:
+      - step: *run-production
+  custom:
+    staging-tests:
+      - step: *run-staging
+    production-tests:
+      - step: *run-production

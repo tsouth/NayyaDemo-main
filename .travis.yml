@@ -1,0 +1,35 @@
+language: java
+
+branches:
+  only:
+    - master
+
+env:
+  global:
+    - secure:
+jobs:
+  include:
+    - stage: Smoketests
+      name: SmokeTests
+      script:
+        - DRIVER=chrome mvn -P suite -DsuiteFile=smokeTests.xml surefire:test --errors
+
+stages:
+  - Regression
+
+notifications:
+  slack:
+    - rooms:
+      on_success: always
+      on_failure: never
+      on_pull_requests: false
+    - rooms:
+      on_success: never
+      on_failure: always
+      on_pull_requests: false
+
+  email:
+    recipients:
+      - thomas@tsouth.me
+    on_success: never
+    on_failure: always

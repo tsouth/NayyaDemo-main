@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Demo Regression tests" verbose="1" >
+    <parameter name="environment" value="production" />
+
+    <test name="Critical functionalities" >
+        <packages>
+            <package name="com.nayya.tests.*"></package>
+        </packages>
+    </test>
+</suite>
